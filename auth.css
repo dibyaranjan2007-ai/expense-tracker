@@ -1,0 +1,388 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0e0e12;
+    --surface: #16161d;
+    --surface2: #1e1e28;
+    --border: rgba(255, 255, 255, 0.07);
+    --accent: #f5c542;
+    --accent2: #e87040;
+    --text: #f0eee8;
+    --muted: #7a7882;
+    --danger: #e05c5c;
+    --success: #5ce08a;
+}
+
+html,
+body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+}
+
+/* ─── Animated Blobs ──────────────────────────────── */
+.blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    opacity: 0.12;
+    animation: drift 12s ease-in-out infinite alternate;
+}
+
+.blob-1 {
+    width: 500px;
+    height: 500px;
+    background: var(--accent);
+    top: -150px;
+    right: -100px;
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    width: 400px;
+    height: 400px;
+    background: var(--accent2);
+    bottom: -100px;
+    left: -80px;
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: #c864ff;
+    top: 50%;
+    left: 60%;
+    animation-delay: -8s;
+    opacity: 0.06;
+}
+
+@keyframes drift {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(30px, 20px) scale(1.05);
+    }
+}
+
+/* ─── Auth Container ──────────────────────────────── */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease both;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ─── Logo ────────────────────────────────────────── */
+.auth-logo {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.logo span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+/* ─── Auth Card ───────────────────────────────────── */
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2rem 2rem 2.2rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.6s 0.15s ease both;
+}
+
+.auth-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+/* ─── Tabs ────────────────────────────────────────── */
+.auth-tabs {
+    display: flex;
+    position: relative;
+    background: var(--surface2);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 1.8rem;
+}
+
+.auth-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.65rem 0;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s;
+    border-radius: 9px;
+}
+
+.auth-tab.active {
+    color: #0e0e12;
+}
+
+.tab-indicator {
+    position: absolute;
+    top: 4px;
+    left: 0%;
+    width: 50%;
+    height: calc(100% - 8px);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 9px;
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+/* ─── Error ───────────────────────────────────────── */
+.auth-error {
+    background: rgba(224, 92, 92, 0.1);
+    border: 1px solid rgba(224, 92, 92, 0.25);
+    border-radius: 10px;
+    color: var(--danger);
+    font-size: 0.82rem;
+    padding: 0.7rem 1rem;
+    margin-bottom: 1.2rem;
+    display: none;
+    animation: shakeIn 0.4s ease;
+}
+
+.auth-error.show {
+    display: block;
+}
+
+@keyframes shakeIn {
+    0% {
+        transform: translateX(0);
+        opacity: 0;
+    }
+
+    25% {
+        transform: translateX(-8px);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateX(6px);
+    }
+
+    75% {
+        transform: translateX(-4px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* ─── Forms ───────────────────────────────────────── */
+.auth-form.hidden {
+    display: none;
+}
+
+.form-group {
+    margin-bottom: 1.1rem;
+}
+
+label {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.45rem;
+}
+
+.input-icon-wrap {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.95rem;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.input-icon-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.85rem 1rem 0.85rem 2.8rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+}
+
+.input-icon-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(245, 197, 66, 0.1);
+}
+
+.input-icon-wrap input::placeholder {
+    color: var(--muted);
+}
+
+/* ─── Auth Button ─────────────────────────────────── */
+.btn-auth {
+    width: 100%;
+    margin-top: 0.6rem;
+    padding: 0.95rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #0e0e12;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-auth:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.btn-auth:active {
+    transform: scale(0.98);
+}
+
+.btn-auth.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.btn-auth.loading .btn-text {
+    opacity: 0;
+}
+
+.btn-loader {
+    display: none;
+}
+
+.btn-auth.loading .btn-loader {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(14, 14, 18, 0.3);
+    border-top-color: #0e0e12;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* ─── Footer ──────────────────────────────────────── */
+.auth-footer {
+    margin-top: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+    animation: fadeUp 0.6s 0.3s ease both;
+}
+
+/* ─── Responsive ──────────────────────────────────── */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 1.5rem 1.3rem 1.7rem;
+        border-radius: 20px;
+    }
+
+    .logo {
+        font-size: 2.2rem;
+    }
+}

@@ -1,89 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Expensio — Track Your Spending</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
 
-<div class="wrapper">
-  <header>
-    <div>
-      <div class="logo"><span>Expensio</span></div>
-      <div class="logo-sub">Personal Finance Tracker</div>
-    </div>
-    <div class="date-badge" id="dateBadge"></div>
-  </header>
-
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-label">Total Spent</div>
-      <div class="stat-value gold" id="totalSpent">₹0</div>
-      <div class="stat-sub" id="totalCount">0 expenses</div>
-      <div class="stat-sparkline">💸</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Highest Expense</div>
-      <div class="stat-value orange" id="highestAmt">₹0</div>
-      <div class="stat-sub" id="highestName">—</div>
-      <div class="stat-sparkline">📈</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Average</div>
-      <div class="stat-value green" id="avgAmt">₹0</div>
-      <div class="stat-sub">per expense</div>
-      <div class="stat-sparkline">📊</div>
-    </div>
-  </div>
-
-  <div class="main-grid">
-    <div class="card">
-      <div class="card-title"><div class="dot"></div> Add Expense</div>
-
-      <div class="form-group">
-        <label>Expense Name</label>
-        <input type="text" id="expName" placeholder="e.g. Chai, Rent, Petrol…"/>
+  <div class="wrapper">
+    <header>
+      <div>
+        <div class="logo"><span>Expensio</span></div>
+        <div class="logo-sub">Personal Finance Tracker</div>
       </div>
+      <div style="display:flex;align-items:center;gap:1rem">
+        <div class="date-badge" id="dateBadge"></div>
+        <div class="user-info" id="userInfo" style="display:none">
+          <span class="user-email" id="userEmail"></span>
+          <button class="btn-logout" onclick="logout()" title="Sign Out">🚪 Logout</button>
+        </div>
+      </div>
+    </header>
 
-      <div class="form-group">
-        <label>Amount (₹)</label>
-        <div class="input-wrap has-prefix">
-          <span class="input-prefix">₹</span>
-          <input type="number" id="expAmount" placeholder="0.00" min="0" step="0.01"/>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Spent</div>
+        <div class="stat-value gold" id="totalSpent">₹0</div>
+        <div class="stat-sub" id="totalCount">0 expenses</div>
+        <div class="stat-sparkline">💸</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Highest Expense</div>
+        <div class="stat-value orange" id="highestAmt">₹0</div>
+        <div class="stat-sub" id="highestName">—</div>
+        <div class="stat-sparkline">📈</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average</div>
+        <div class="stat-value green" id="avgAmt">₹0</div>
+        <div class="stat-sub">per expense</div>
+        <div class="stat-sparkline">📊</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="card">
+        <div class="card-title">
+          <div class="dot"></div> Add Expense
+        </div>
+
+        <div class="form-group">
+          <label>Expense Name</label>
+          <input type="text" id="expName" placeholder="e.g. Chai, Rent, Petrol…" />
+        </div>
+
+        <div class="form-group">
+          <label>Amount (₹)</label>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="expAmount" placeholder="0.00" min="0" step="0.01" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Category</label>
+          <div class="cat-grid" id="catGrid"></div>
+        </div>
+
+        <button class="btn-add" onclick="addExpense()">+ Add Expense</button>
+
+        <div class="breakdown-section">
+          <div class="breakdown-title">Category Breakdown</div>
+          <div id="breakdown"></div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Category</label>
-        <div class="cat-grid" id="catGrid"></div>
+      <div class="card">
+        <div class="list-header">
+          <div class="card-title" style="margin-bottom:0">
+            <div class="dot"></div> Expenses
+          </div>
+          <input class="list-search" type="text" id="searchInput" placeholder="Search…" oninput="renderList()" />
+        </div>
+        <ul class="expense-list" id="expenseList"></ul>
       </div>
-
-      <button class="btn-add" onclick="addExpense()">+ Add Expense</button>
-
-      <div class="breakdown-section">
-        <div class="breakdown-title">Category Breakdown</div>
-        <div id="breakdown"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="list-header">
-        <div class="card-title" style="margin-bottom:0"><div class="dot"></div> Expenses</div>
-        <input class="list-search" type="text" id="searchInput" placeholder="Search…" oninput="renderList()"/>
-      </div>
-      <ul class="expense-list" id="expenseList"></ul>
     </div>
   </div>
-</div>
 
-<div class="toast" id="toast"></div>
+  <div class="toast" id="toast"></div>
 
-<script src="app.js"></script>
+  <!-- Firebase SDK (compat v9) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>

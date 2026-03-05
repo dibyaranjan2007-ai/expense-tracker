@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expensio — Sign In</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="auth.css" />
+</head>
+
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="auth-container">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <div class="logo"><span>Expensio</span></div>
+            <div class="logo-sub">Personal Finance Tracker</div>
+        </div>
+
+        <!-- Auth Card -->
+        <div class="auth-card">
+
+            <!-- Tab Toggle -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+                <button class="auth-tab" id="tabSignup" onclick="switchTab('signup')">Sign Up</button>
+                <div class="tab-indicator" id="tabIndicator"></div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="auth-error" id="authError"></div>
+
+            <!-- Login Form -->
+            <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="loginEmail" placeholder="you@example.com" required
+                            autocomplete="email" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required minlength="6"
+                            autocomplete="current-password" />
+                    </div>
+                </div>
+                <button class="btn-auth" type="submit" id="loginBtn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-loader" id="loginLoader"></span>
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form class="auth-form hidden" id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="signupEmail" placeholder="you@example.com" required
+                            autocomplete="email" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="signupPassword" placeholder="Min 6 characters" required minlength="6"
+                            autocomplete="new-password" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-icon-wrap">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" id="signupConfirm" placeholder="Re-enter password" required minlength="6"
+                            autocomplete="new-password" />
+                    </div>
+                </div>
+                <button class="btn-auth" type="submit" id="signupBtn">
+                    <span class="btn-text">Create Account</span>
+                    <span class="btn-loader" id="signupLoader"></span>
+                </button>
+            </form>
+
+        </div>
+
+        <div class="auth-footer">
+            Secure authentication powered by Firebase 🔥
+        </div>
+
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // If already signed in, go straight to the app
+        auth.onAuthStateChanged(user => {
+            if (user && !user.isAnonymous) {
+                window.location.href = 'index.html';
+            }
+        });
+
+        // ─── Tab Switching ─────────────────────────────────
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const tabLogin = document.getElementById('tabLogin');
+            const tabSignup = document.getElementById('tabSignup');
+            const indicator = document.getElementById('tabIndicator');
+            const error = document.getElementById('authError');
+
+            error.classList.remove('show');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabLogin.classList.add('active');
+                tabSignup.classList.remove('active');
+                indicator.style.left = '0%';
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabLogin.classList.remove('active');
+                tabSignup.classList.add('active');
+                indicator.style.left = '50%';
+            }
+        }
+
+        // ─── Error Display ─────────────────────────────────
+        function showError(msg) {
+            const el = document.getElementById('authError');
+            el.textContent = msg;
+            el.classList.add('show');
+        }
+
+        function friendlyError(code) {
+            const map = {
+                'auth/email-already-in-use': 'This email is already registered. Try signing in.',
+                'auth/invalid-email': 'Please enter a valid email address.',
+                'auth/user-not-found': 'No account found with this email.',
+                'auth/wrong-password': 'Incorrect password. Please try again.',
+                'auth/weak-password': 'Password must be at least 6 characters.',
+                'auth/too-many-requests': 'Too many attempts. Please wait and try again.',
+                'auth/invalid-credential': 'Invalid email or password.',
+                'auth/network-request-failed': 'Network error. Check your connection.',
+            };
+            return map[code] || 'Something went wrong. Please try again.';
+        }
+
+        // ─── Loading State ─────────────────────────────────
+        function setLoading(btn, loader, loading) {
+            if (loading) {
+                btn.disabled = true;
+                btn.classList.add('loading');
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('loading');
+            }
+        }
+
+        // ─── Login Handler ─────────────────────────────────
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+
+            document.getElementById('authError').classList.remove('show');
+            setLoading(btn, null, true);
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error('Login error:', err);
+                showError(friendlyError(err.code));
+                setLoading(btn, null, false);
+            }
+        }
+
+        // ─── Signup Handler ────────────────────────────────
+        async function handleSignup(e) {
+            e.preventDefault();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            const btn = document.getElementById('signupBtn');
+
+            document.getElementById('authError').classList.remove('show');
+
+            if (password !== confirm) {
+                showError('Passwords do not match.');
+                return;
+            }
+
+            setLoading(btn, null, true);
+
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error('Signup error:', err);
+                showError(friendlyError(err.code));
+                setLoading(btn, null, false);
+            }
+        }
+
+        // Enter key support
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                const active = document.activeElement;
+                if (active.closest('#loginForm')) handleLogin(e);
+                else if (active.closest('#signupForm')) handleSignup(e);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
